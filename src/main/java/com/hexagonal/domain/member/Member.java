@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NaturalId;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +20,7 @@ public class Member {
     private Long id;
 
     @Embedded
+    @NaturalId
     private Email email;
 
     private String nickname;
@@ -38,8 +40,16 @@ public class Member {
         member.nickname = requireNonNull(request.nickname());
         member.passwordHash = passwordEncoder.encode(requireNonNull(request.password()));
 
-        member.status = MemberStatus.ACTIVE;
+        member.status = MemberStatus.PENDING;
 
         return member;
+    }
+
+    public void activate() {
+        this.status = MemberStatus.ACTIVE;
+    }
+
+    public boolean isActive() {
+        return this.status == MemberStatus.ACTIVE;
     }
 }
