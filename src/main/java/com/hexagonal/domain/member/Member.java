@@ -24,7 +24,8 @@ public class Member {
     @NaturalId
     private Email email;
 
-    private String nickname;
+    @Embedded
+    private Nickname nickname;
 
     private String passwordHash;
 
@@ -38,10 +39,15 @@ public class Member {
         Member member = new Member();
 
         member.email = new Email(request.email());
-        member.nickname = requireNonNull(request.nickname());
+
+        String nickname = requireNonNull(request.nickname());
+        member.nickname = new Nickname(nickname);
+
         member.passwordHash = passwordEncoder.encode(requireNonNull(request.password()));
 
         member.status = MemberStatus.PENDING;
+
+        member.registeredAt = LocalDateTime.now();
 
         return member;
     }
