@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 class MemberTest {
     PasswordEncoder passwordEncoder = new PasswordEncoder() {
@@ -23,7 +22,7 @@ class MemberTest {
 
     @DisplayName("회원 등록 시 상태는 PENDING이다.")
     @Test
-    void register_ShouldSetStatusToPending() throws Exception {
+    void register_ShouldSetStatusToPending() {
         //given
         MemberRegisterRequest request = new MemberRegisterRequest("test@test.com", "테스트닉네임", "secret");
 
@@ -32,5 +31,32 @@ class MemberTest {
 
         //then
         assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
+    }
+    
+    @DisplayName("회원 활성화는 PENDING 상태에서만 가능하다.")
+    @Test
+    void activate_ShouldSetStatusToActive_WhenStatusIsPending() {
+        //given
+        MemberRegisterRequest request = new MemberRegisterRequest("test@test.com", "테스트닉네임", "secret");
+        Member member = Member.register(request, passwordEncoder);
+
+        //when
+        member.activate();
+
+        //then
+        assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVE);
+    }
+    
+    @DisplayName("PENDING이 아닌 상태에서는 활성화할 수 없다.")
+    @Test
+    void activate_ShouldThrowException_WhenStatusIsNotPending() {
+        //given
+        MemberRegisterRequest request = new MemberRegisterRequest("test@test.com", "테스트닉네임", "secret");
+        Member member = Member.register(request, passwordEncoder);
+        member.activate();
+        member.deactivate();
+        
+        //when & then
+        assertThatThrownBy(() -> member.activate()).isInstanceOf(IllegalStateException.class);
     }
 }

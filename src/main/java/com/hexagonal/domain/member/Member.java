@@ -8,7 +8,8 @@ import org.hibernate.annotations.NaturalId;
 
 import java.time.LocalDateTime;
 
-import static java.util.Objects.*;
+import static java.util.Objects.requireNonNull;
+import static org.springframework.util.Assert.state;
 
 @Entity
 @Getter
@@ -46,7 +47,15 @@ public class Member {
     }
 
     public void activate() {
+        state(this.status == MemberStatus.PENDING, "PENDING 상태가 아닙니다");
+
         this.status = MemberStatus.ACTIVE;
+    }
+
+    public void deactivate() {
+        state(this.status == MemberStatus.ACTIVE, "ACTIVE 상태가 아닙니다");
+
+        this.status = MemberStatus.DEACTIVATED;
     }
 
     public boolean isActive() {
