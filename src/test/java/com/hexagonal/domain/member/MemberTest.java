@@ -59,4 +59,31 @@ class MemberTest {
         //when & then
         assertThatThrownBy(() -> member.activate()).isInstanceOf(IllegalStateException.class);
     }
+
+    @DisplayName("ACTIVE가 아닌 상태에서는 비활성화할 수 없다.")
+    @Test
+    void deactivate_ShouldThrowException_WhenStatusIsNotActive() {
+        //given
+        MemberRegisterRequest request = new MemberRegisterRequest("test@test.com", "테스트닉네임", "secret");
+        Member member = Member.register(request, passwordEncoder);
+
+        //when & then
+        assertThatThrownBy(() -> member.deactivate()).isInstanceOf(IllegalStateException.class);
+    }
+
+    @DisplayName("ACTIVE 상태에서만 비활성화할 수 있다.")
+    @Test
+    void deactivate_ShouldSetStatusToDeactivated_WhenStatusIsActive() {
+        //given
+        MemberRegisterRequest request = new MemberRegisterRequest("test@test.com", "테스트닉네임", "secret");
+        Member member = Member.register(request, passwordEncoder);
+        member.activate();
+
+        //when
+        member.deactivate();
+
+
+        //then
+        assertThat(member.getStatus()).isEqualTo(MemberStatus.DEACTIVATED);
+    }
 }
