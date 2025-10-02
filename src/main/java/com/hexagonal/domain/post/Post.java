@@ -16,7 +16,8 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+    @Embedded
+    private PostTitle title;
 
     private String content;
 
