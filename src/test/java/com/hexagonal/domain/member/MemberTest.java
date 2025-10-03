@@ -82,7 +82,6 @@ class MemberTest {
         //when
         member.deactivate();
 
-
         //then
         assertThat(member.getStatus()).isEqualTo(MemberStatus.DEACTIVATED);
     }

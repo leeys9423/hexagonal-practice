@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import static java.util.Objects.requireNonNull;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,4 +32,24 @@ public class Post {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    public static Post create(CreatePostRequest request) {
+        Post post = new Post();
+
+        String title = requireNonNull(request.title());
+        post.title = new PostTitle(title);
+
+        String content = requireNonNull(request.content());
+        post.content = new PostContent(content);
+
+        post.authorId = requireNonNull(request.authorId());
+
+        post.status = requireNonNull(request.status());
+
+        post.createdAt = LocalDateTime.now();
+
+        post.updatedAt = LocalDateTime.now();
+
+        return post;
+    }
 }
