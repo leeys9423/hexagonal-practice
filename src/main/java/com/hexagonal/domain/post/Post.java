@@ -19,7 +19,8 @@ public class Post {
     @Embedded
     private PostTitle title;
 
-    private String content;
+    @Embedded
+    private PostContent content;
 
     private Long authorId;
 
